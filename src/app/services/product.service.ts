@@ -61,16 +61,15 @@ export class ProductsService {
     return this.http.get<Product>(`${this.apiUrl}/products/${id}`).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === HttpStatusCode.InternalServerError) {
-          return throwError('Error en Server');
+          return throwError(() => 'Error en Server');
         }
         if (error.status === HttpStatusCode.NotFound) {
-          return throwError('El producto no existe');
+          return throwError(() => 'El producto no existe');
         }
         if (error.status === HttpStatusCode.Unauthorized) {
-          return throwError('No estas autorizado');
+          return throwError(() => 'No estas autorizado');
         }
-
-        return throwError('Algo salio mal');
+        return throwError(() => 'Algo salio mal');
       })
     );
   }
