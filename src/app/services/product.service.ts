@@ -7,7 +7,7 @@ import {
 } from '@angular/common/http';
 import { catchError, retry, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
-import { throwError, zip } from 'rxjs';
+import { Observable, throwError, zip } from 'rxjs';
 
 import {
   CreateProductDto,
@@ -26,11 +26,10 @@ export class ProductsService {
 
   constructor(private http: HttpClient) {}
 
-  getAllProducts(limit?: number, offset?: number) {
+  getAllProducts(limit?: number, offset?: number): Observable<Product[]> {
 
     let params = new HttpParams();
-    if (limit && offset) {
-
+    if (limit && offset != null) {
       params = params.set('limit', limit);
       params = params.set('offset', offset);
     }
@@ -40,7 +39,7 @@ export class ProductsService {
       map(products => products.map(item => {
         return {
           ...item,
-          taxes: .19 * item.price
+          taxes: item.price > 0 ? .19 * item.price : 0
         }
       }))
     );
