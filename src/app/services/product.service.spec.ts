@@ -4,12 +4,17 @@ import {
   HttpTestingController,
 } from '@angular/common/http/testing';
 import { ProductsService } from './product.service';
-import { CreateProductDto, Product, UpdateProductDto } from '../models/product.model';
+import {
+  CreateProductDto,
+  Product,
+  UpdateProductDto,
+} from '../models/product.model';
 import { environment } from '../../environments/environment';
 import {
   generateManyProducts,
   generateOneProduct,
 } from '../models/product.mock';
+import { HttpStatusCode } from '@angular/common/http';
 
 fdescribe('Test Product Services', () => {
   let productService: ProductsService;
@@ -145,7 +150,7 @@ fdescribe('Test Product Services', () => {
     it('should update a product', (doneFn) => {
       const mockData = generateOneProduct();
       const dto: UpdateProductDto = {
-        title: 'updated Product'
+        title: 'updated Product',
       };
       const productId = '1';
 
@@ -163,7 +168,6 @@ fdescribe('Test Product Services', () => {
     });
   });
 
-
   describe('Test Delete', () => {
     it('should delete a product', (doneFn) => {
       const mockData = true;
@@ -179,6 +183,46 @@ fdescribe('Test Product Services', () => {
       const req = httpController.expectOne(url);
       expect(req.request.method).toEqual('DELETE');
       req.flush(mockData);
+    });
+  });
+
+  describe('Test getProductById', () => {
+    it('should return a product', (doneFn) => {
+      const mockData = generateOneProduct();
+      const productId = '1';
+
+      productService.getProductById(productId).subscribe((data) => {
+        expect(data).toEqual(mockData);
+        doneFn();
+      });
+
+      // http config
+      const url = `${environment.API_URL}/api/v1/products/${productId}`;
+      const req = httpController.expectOne(url);
+      req.flush(mockData);
+      expect(req.request.method).toEqual('GET');
+    });
+
+    it('should return correct message when statusCode is 404', (doneFn) => {
+      const productId = '1';
+      const msgError = '404 message';
+      const mockError = {
+        status: HttpStatusCode.NotFound,
+        statusText: msgError,
+      };
+
+      productService.getProductById(productId).subscribe({
+        error: (error) => {
+          expect(error).toEqual('product does not exist');
+          doneFn();
+        },
+      });
+
+      // http config
+      const url = `${environment.API_URL}/api/v1/products/${productId}`;
+      const req = httpController.expectOne(url);
+      expect(req.request.method).toEqual('GET');
+      req.flush(msgError, mockError);
     });
   });
 });

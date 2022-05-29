@@ -64,12 +64,12 @@ export class ProductsService {
           return throwError(() => 'Error en Server');
         }
         if (error.status === HttpStatusCode.NotFound) {
-          return throwError(() => 'El producto no existe');
+          return throwError(() => 'product does not exist');
         }
         if (error.status === HttpStatusCode.Unauthorized) {
-          return throwError(() => 'No estas autorizado');
+          return throwError(() => 'unauthorized');
         }
-        return throwError(() => 'Algo salio mal');
+        return throwError(() => 'something went wrong');
       })
     );
   }
