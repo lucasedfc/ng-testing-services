@@ -18,7 +18,7 @@ import { HttpStatusCode, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from 'src/interceptors/token.interceptor';
 import { TokenService } from './token.service';
 
-fdescribe('Test Product Services', () => {
+describe('Test Product Services', () => {
   let productService: ProductsService;
   let httpController: HttpTestingController;
   let tokenService: TokenService;
